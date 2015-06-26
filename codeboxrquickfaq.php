@@ -1,11 +1,11 @@
 <?php
 /*
-  Plugin Name: Codeboxr Quick FAQ
-  Plugin URI: http://codeboxr.com/product/quick-faq-manager-for-wordpress
+  Plugin Name: CBX Quick FAQ
+  Plugin URI: http://wpboxr.com/product/cbx-quick-faq-manager-for-wordpress
   Description: Flexible FAQ Display for wordpress using shortcode & custom post type
-  Version: 1.2.1
-  Author: Codeboxr
-  Author URI: info@codeboxr.com
+  Version: 1.2.2
+  Author: WPBoxr
+  Author URI: info@wpboxr.com
  */
 
 // prefix for this plugin
@@ -46,14 +46,23 @@ class codeboxr_quick_faq {
      */
     public function __construct() {
 
+	    load_plugin_textdomain( 'codeboxrquickfaq', false, plugin_dir_path( __FILE__ ) . 'language/' );
+
         add_action('admin_init','codeboxrquickfaq_admin_init');
         add_action('init', array($this, 'codeboxrquickfaq_create_custom_type'));
-        //add_action('init', array($this, 'cbfaq_taxonomy'));
+
+	    //adding style and scripts
         add_action('wp_enqueue_scripts', array($this, 'add_codeboxrquickfaq_stylesheet'));
+
+	    //shortcodes
         add_shortcode('codeboxrquickfaq', array($this, 'codeboxrquickfaq_single'));
         add_shortcode('codeboxrquickfaqwrap', array($this, 'codeboxrquickfaq_wrap'));
         add_shortcode('codeboxrquickfaqpost', array($this, 'codeboxrquickfaq_list_custom_posts'));
-        add_filter('plugin_action_links_' . CODEBOXR_QUICKFAQ_BASENAME, array($this, 'codeboxrquickfaq_plugin_support'));
+
+	    //plugin listing hook
+	    add_filter('plugin_action_links_' . CODEBOXR_QUICKFAQ_BASENAME, array($this, 'codeboxrquickfaq_plugin_support'));
+
+	    //plugin option panel
         add_action( 'admin_menu', array( $this, 'add_codeboxrquickfaq_admin_menu' ) );
     }
 
@@ -61,7 +70,7 @@ class codeboxr_quick_faq {
      * add option page
      */
     function add_codeboxrquickfaq_admin_menu(){
-        add_options_page('Quick Faq', 'Quick Faq', 'administrator','codeboxrquickfaq', array($this, 'show_codeboxrquickfaq_page'));
+        add_options_page('CBX Quick Faq', 'CBX Quick Faq', 'manage_options','codeboxrquickfaq', array($this, 'show_codeboxrquickfaq_page'));
     }
     /**
      * display option page
@@ -87,10 +96,8 @@ class codeboxr_quick_faq {
                     'default'   => '1',
 
                 ),
-            ),
-            'wedevs_advanced' => array(
+            )
 
-            ),
         );
 
         $settings_api = new codeboxrquickfaq_settings();
@@ -98,7 +105,7 @@ class codeboxr_quick_faq {
         echo '<div class="wrap columns-2">';
 
         $output = '<div class="icon32 icon32_cbrp_admin icon32-cbrp-edit" id="icon32-cbrp-edit"><br></div>';
-        $output .= '<h2>' . __( 'Codeboxr Quick Faq', 'codeboxrquickfaq' ) . '</h2>';
+        $output .= '<h2>' . __( 'CBX Quick Faq', 'codeboxrquickfaq' ) . '</h2>';
         $output .= '<div class="codeboxrquickfaq_wrapper metabox-holder has-right-sidebar" id="poststuff">';
 
         if(isset($_GET['settings-updated'])):
@@ -124,65 +131,73 @@ class codeboxr_quick_faq {
                 <h3>Plugin Info</h3>
 
                 <div class="inside">
-                    <p>Name : Codeboxr Quick Faq <?php echo 'v' . CBQUICKFAQ_VERSION; ?></p>
-
-                    <p>Author : Codeboxr Team</p>
-
-                    <p>Plugin URL :
-                        <a href="http://codeboxr.com/product/quick-faq-manager-for-wordpress" target="_blank">Codeboxr.com</a>
+                    <p>Name : CBX Quick Faq <?php echo 'v' . CBQUICKFAQ_VERSION; ?></p>
+                    <p>Author :
+                        <a href="http://wpboxr.com/product/cbx-quick-faq-manager-for-wordpress" target="_blank">WPBoxr Team</a>
                     </p>
-
-                    <p>Email : <a href="mailto:info@codeboxr.com" target="_blank">info@codeboxr.com</a></p>
-
-                    <p>Contact : <a href="http://codeboxr.com/contact-us.html" target="_blank">Contact Us</a></p>
+                    <p>Email : <a href="mailto:info@wpboxr.com" target="_blank">info@wpboxr.com</a></p>
+                    <p>Contact : <a href="http://wpboxr.com/contact-us" target="_blank">Contact Us</a></p>
                 </div>
             </div>
             <div class="postbox">
                 <h3>Help & Supports</h3>
                 <div class="inside">
-                    <p>Support: <a href="http://codeboxr.com/contact-us.html" target="_blank">Contact Us</a></p>
-                    <p><i class="icon-envelope"></i> <a href="mailto:info@codeboxr.com">info@codeboxr.com</a></p>
+                    <p>Support: <a href="http://wpboxr.com/contact-us" target="_blank">Contact Us</a></p>
+                    <p><i class="icon-envelope"></i> <a href="mailto:info@wpboxr.com">info@codeboxr.com</a></p>
                     <p><i class="icon-phone"></i> <a href="tel:008801717308615">+8801717308615</a> (CEO: Sabuj Kundu)</p>
-                    <!--p><i class="icon-building"></i>  Address: Flat-11B1, 252 Elephant Road (Near Kataban Crossing), Dhaka 1205, Bangladesh.<br-->
                 </div>
             </div>
-            <div class="postbox">
-                <h3>Codeboxr Updates</h3>
-                <div class="inside">
-                    <?php
-                    include_once(ABSPATH . WPINC . '/feed.php');
-                    if(function_exists('fetch_feed')) {
-                        $feed = fetch_feed('http://codeboxr.com/feed');
-                        // $feed = fetch_feed('http://feeds.feedburner.com/codeboxr'); // this is the external website's RSS feed URL
-                        if (!is_wp_error($feed)) : $feed->init();
-                            $feed->set_output_encoding('UTF-8'); // this is the encoding parameter, and can be left unchanged in almost every case
-                            $feed->handle_content_type(); // this double-checks the encoding type
-                            $feed->set_cache_duration(21600); // 21,600 seconds is six hours
-                            $limit = $feed->get_item_quantity(6); // fetches the 18 most recent RSS feed stories
-                            $items = $feed->get_items(0, $limit); // this sets the limit and array for parsing the feed
+	        <div class="postbox">
+		        <h3><?php _e('WPBoxr Updates','codeboxrquickfaq'); ?></h3>
+		        <div class="inside">
+			        <?php
 
-                            $blocks = array_slice($items, 0, 6); // Items zero through six will be displayed here
-                            echo '<ul>';
-                            foreach ($blocks as $block) {
-                                $url = $block->get_permalink();
-                                echo '<li><a target="_blank" href="'.$url.'">';
-                                echo '<strong>'.$block->get_title().'</strong></a>';
-                                echo '</li>';
+			        include_once(ABSPATH . WPINC . '/feed.php');
+			        if (function_exists('fetch_feed')) {
+				        $feed = fetch_feed('http://wpboxr.com/feed');
+				        // $feed = fetch_feed('http://feeds.feedburner.com/codeboxr'); // this is the external website's RSS feed URL
+				        if (!is_wp_error($feed)) : $feed->init();
+					        $feed->set_output_encoding('UTF-8'); // this is the encoding parameter, and can be left unchanged in almost every case
+					        $feed->handle_content_type(); // this double-checks the encoding type
+					        $feed->set_cache_duration(21600); // 21,600 seconds is six hours
+					        $limit = $feed->get_item_quantity(6); // fetches the 18 most recent RSS feed stories
+					        $items = $feed->get_items(0, $limit); // this sets the limit and array for parsing the feed
 
-                            }//end foreach
-                            echo '</ul>';
-                        endif;
-                    }
-                    ?>
-                </div>
-            </div>
+					        $blocks = array_slice($items, 0, 6); // Items zero through six will be displayed here
+					        echo '<ul>';
+					        foreach ($blocks as $block) {
+						        $url = $block->get_permalink();
+						        echo '<li><a target="_blank" href="' . $url . '">';
+						        echo '<strong>' . $block->get_title() . '</strong></a></li>';
+					        }//end foreach
+					        echo '</ul>';
 
-            <div class="postbox">
-                <h3>Codeboxr on facebook</h3>
-                <div class="inside">
-                    <iframe scrolling="no" frameborder="0" allowtransparency="true" style="border:none; overflow:hidden; width:260px; height:258px;" src="//www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2Fcodeboxr&amp;width=260&amp;height=258&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;border_color&amp;header=false&amp;appId=558248797526834"></iframe>
-                </div>
-            </div>
+
+				        endif;
+			        }
+			        ?>
+		        </div>
+	        </div>
+	        <div class="postbox">
+		        <div class="inside">
+			        <h3><?php _e('Codeboxr Networks','codeboxrquickfaq') ?></h3>
+			        <p><?php _e('Html, Wordpress & Joomla Themes','codeboxrquickfaq') ?></p>
+			        <a target="_blank" href="http://themeboxr.com"><img src="http://themeboxr.com/wp-content/themes/themeboxr/images/themeboxr-logo-rect.png" style="max-width: 100%;" alt="themeboxr" title="Themeboxr - useful themes"  /></a>
+			        <br/>
+			        <p><?php _e('Wordpress Plugins','codeboxrquickfaq') ?></p>
+			        <a target="_blank" href="http://wpboxr.com"><img src="http://wpboxr.com/wp-content/themes/themeboxr/images/wpboxr-logo-rect.png" style="max-width: 100%;" alt="wpboxr" title="WPBoxr - Wordpress Extracts"  /></a>
+			        <br/><br/>
+			        <p>Joomla Extensions</p>
+			        <a target="_blank" href="http://joomboxr.com"><img src="http://joomboxr.com/wp-content/themes/themeboxr/images/joomboxr-logo-rect.png" style="max-width: 100%;" alt="joomboxr" title="Joomboxr - Joomla Extracts"  /></a>
+
+		        </div>
+	        </div>
+	        <div class="postbox">
+		        <h3><?php _e('WPBoxr on facebook','codeboxrquickfaq') ?></h3>
+		        <div class="inside">
+			        <iframe src="//www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2Fwpboxr&amp;width=260&amp;height=258&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;border_color&amp;header=false&amp;appId=558248797526834" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:260px; height:258px;" allowTransparency="true"></iframe>
+		        </div>
+	        </div>
         </div>
         <?php
         echo '</div>'; //end cborderbycouponforwoocommerce metabox-holder has-right-sidebar
@@ -197,25 +212,27 @@ class codeboxr_quick_faq {
         $cbqfaq_settings = get_option('codeboxrquickfaq_global_settings');
         //var_dump($cbqfaq_settings);exit;
         if(isset( $cbqfaq_settings["codeboxrquickfaq_enableposttype"]) && $cbqfaq_settings["codeboxrquickfaq_enableposttype"] == "on"){
+
             // register custom post type
             register_post_type('codeboxrquickfaqs',
                 array(
                     'labels' => array(
-                        'name' => __('CB Quick Faq'),
-                        'singular_name' => __('codeboxrquickfaqs')
+                        'name' => __('CBX Quick Faq','codeboxrquickfaq'),
+                        'singular_name' => __('CBX Quick Faq','codeboxrquickfaq')
                     ),
                     //'taxonomies' => array('category'),
                     'public' => true,
                     'has_archive' => true,
                 )
             );
+
             // register the category
             register_taxonomy(
                 'codeboxrquickfaqcategory',
                 'codeboxrquickfaqs',
                 array(
                     'hierarchical' => true,
-                    'label' => 'CB Faq Catagory',
+                    'label' => __('CBX Faq Catagory','codeboxrquickfaq'),
                     'query_var' => true,
                     'rewrite' => array('slug' => 'codeboxrquickfaqcategory')
                 )
@@ -238,7 +255,19 @@ class codeboxr_quick_faq {
      */
     function codeboxrquickfaq_list_custom_posts($atts) {
 
-        $cbquickfaq_list_options = shortcode_atts(array( 'faqborder' =>"#ffffff",'color'=>'#000000','showcredit'  => '1','limit' => -1, 'type' => 'codeboxrquickfaqs', 'allfaqclose' => 1, 'order' => 'DSC', 'orderby' => 'ID', 'category' => '','category_ids' => ''), $atts);
+        $cbquickfaq_list_options = shortcode_atts(
+	        array(
+		        'faqborder'     =>"#ffffff",
+		        'color'         =>'#000000',
+		        'showcredit'    => '1',
+		        'limit'         => -1,
+		        'type'          => 'codeboxrquickfaqs',
+		        'allfaqclose'   => 1,
+		        'order'         => 'DSC',
+		        'orderby'       => 'ID',
+		        'category'      => '',
+		        'category_ids'  => ''
+	        ), $atts, 'codeboxrquickfaqpost');
 
         global $paged;
        // if  cat name given
@@ -346,7 +375,7 @@ class codeboxr_quick_faq {
                             'title'         => 'Click To Open',
                             'faqborder'     =>"#ffffff",
                             'titlecolor'     =>""
-                        ), $atts);
+                        ), $atts, 'codeboxrquickfaq');
 
         if($cbquickfaq_options['titlecolor'] !=''){
 
@@ -378,7 +407,7 @@ class codeboxr_quick_faq {
                             'showcredit'  => '1',
                             'color'       => '#000000'
 
-                        ), $atts);
+                        ), $atts, 'codeboxrquickfaqwrap');
         //credit msg
         if($cbquickfaq_wrap_options[ 'showcredit' ] == '1'){
 

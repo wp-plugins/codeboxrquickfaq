@@ -4,7 +4,7 @@ h3.cbquickfaqheader {
     cursor:hand;
     padding: 0px;
     padding-left: 30px;
-    background-image: url('codeboxrquickfaq_images/codeboxrquickfaq_plus.png');
+    background-image: url('images/plus.png');
     background-position: 10px center;
     background-repeat: no-repeat;
     line-height: 1em;
@@ -20,8 +20,8 @@ div.cbquickfaqwrap {
     padding-bottom: 60px;
 
 }
-h3.active {
-    background-image: url('codeboxrquickfaq_images/codeboxrquickfaq_minus.png') !important;
+h3.cbquickfaqheader.active {
+    background-image: url('images/minus.png') !important;
     background-position: 10px center;
     background-repeat: no-repeat;
 }

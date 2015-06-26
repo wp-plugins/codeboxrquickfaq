@@ -1,10 +1,10 @@
 /*
-Codeboxr QuickFaq
+CBX QuickFaq
 
 */
 
-jQuery(function($){
-    $(document).ready(function(){
+
+    jQuery(document).ready(function($){
         $("div.cbquickfaqwrap").each(function(){
 
 
@@ -39,7 +39,7 @@ jQuery(function($){
         });// end of each div
     });// end of dom ready
 
-});
+
 
 
 

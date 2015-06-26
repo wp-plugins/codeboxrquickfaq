@@ -1,20 +1,18 @@
-=== Codeboxr Quick FAQ ===
-Contributors: manchumahara, codeboxr
-Donate link: http://codeboxr.com
-Tags: faq,shortcodes,pages
+=== "CBX Quick FAQ ===
+Contributors: manchumahara, codeboxr, wpboxr
+Donate link: http://wpboxr.com
+Tags: faq
 Requires at least: 3.0
-Tested up to: 4.0
-Stable tag: 1.2.1
+Tested up to: 4.2.2
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
- Codeboxr Quick FAQ for wordpress
+ CBX Quick FAQ for wordpress
 
 == Description ==
 
- Codeboxr Quick FAQ for wordpress
-
-Codeboxr Quick FAQ  is a WordPress plugin that will help you  to create a nice faq page with minimum effort and maximum options;
+CBX Quick FAQ  is a WordPress plugin that will help you  to create a nice faq page with minimum effort and maximum options;
 You can show all posts of custom post type CB Quick FAQs ,posts of any specific category with category name ,post of some categories with cat id.
 One can also type faqs directly in any post or page .
 
@@ -99,7 +97,7 @@ Features:
 *   Onae can set the order,post number ,show or hide first faq when loaded etc.
 *   Select any post type including custom or default post type
 
-See more details and usages guide here http://codeboxr.com/product/quick-faq-manager-for-wordpress
+See more details and usages guide here http://wpboxr.com/product/cbx-quick-faq-manager-for-wordpress
 
 
 == Installation ==
