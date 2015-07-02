@@ -1,4 +1,4 @@
-=== "CBX Quick FAQ ===
+=== CBX Quick FAQ ===
 Contributors: manchumahara, codeboxr, wpboxr
 Donate link: http://wpboxr.com
 Tags: faq
